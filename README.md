@@ -51,16 +51,19 @@ Options should be placed in the `/etc/classification-banner/banner.conf` file.
 
 ```
  message      - The classification level to display (Default: 'UNCLASSIFIED')
- foreground_color      - Foreground color of the text to display (Default: '#007A33' "Green")
- background_color      - Background color of the banner the text is against (Default: '#FFFFFF' "White")
- face         - Font face to use for the displayed text (Default: 'liberation-sans')
+ foreground   - Foreground color of the text to display (Default: '#007A33' "Green")
+ background   - Background color of the banner the text is against (Default: '#FFFFFF' "White")
+ font         - Font face to use for the displayed text (Default: 'liberation-sans')
  size         - Size of font to use for text (Default: 'small')
  weight       - Bold or normal (Default: 'bold')
  show_top     - Show top banner (Default: True)
  show_bottom  - Show bottom banner (Default: True)
  horizontal_resolution         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
  vertical_resolution           - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
+ sys_info     - Show user and hostname in the top banner (Default: False)
  opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
+ esc          - Enable/Disable the 'ESC to hide' message (Default: True (enabled))
+ spanning     - Enable banner(s) to span across screens as a single banner (Default: False)
 ```
 
 Command line options that correspond to the above settings:
@@ -69,14 +72,17 @@ Command line options that correspond to the above settings:
  -m, --message
  -f, --fgcolor
  -b, --bgcolor
- --face
+ --font
  --size
  --weight
  --hide-top
  --hide-bottom
  -x, --hres
  -y, --vres
+ --system-info
  -o, --opacity
+ --disable-esc
+ --enable-spanning
 ```
 
 Examples
@@ -126,26 +132,26 @@ SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder
     CONFIDENTIAL
 
         message='CONFIDENTIAL'
-        fgcolor='#FFFFFF'
-        bgcolor='#0033A0'
+        foreground='#FFFFFF'
+        background='#0033A0'
 
     SECRET
 
         message='SECRET'
-        fgcolor='#FFFFFF'
-        bgcolor='#C8102E'
+        foreground='#FFFFFF'
+        background='#C8102E'
 
     TOP SECRET
 
         message='TOP SECRET'
-        fgcolor='#FFFFFF'
-        bgcolor='#FF671F'
+        foreground='#FFFFFF'
+        background='#FF671F'
 
     TOP SECRET//SCI
 
         message='TOP SECRET//SCI'
-        fgcolor="#000000'
-        bgcolor='#F7EA48'
+        foreground="#000000'
+        background='#F7EA48'
 ```
 
 Autostart
@@ -159,7 +165,7 @@ vi /etc/xdg/autostart/classification-banner.desktop
 
      [Desktop Entry]
      Name=Classification Banner
-     Exec=/usr/bin/classification-banner.py
+     Exec=/usr/bin/classification-banner
      Comment=User Notification for Security Level of System.
      Type=Application
      Encoding=UTF-8
