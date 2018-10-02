@@ -66,7 +66,7 @@ Options should be placed in the `/etc/classification-banner/banner.conf` file.
  spanning     - Enable banner(s) to span across screens as a single banner (Default: False)
 ```
 
-Command line options that correspond to the above settings:
+Command line options that correspond to the above settings (use `classification-banner --help` for more information):
 
 ```
  -m, --message
