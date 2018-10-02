@@ -162,11 +162,10 @@ Autostart
 =========
 
 To auto-start the classification-banner script on the GNOME Desktop,
-create the following file:
+create the file `/etc/xdg/autostart/classification-banner.desktop`
+with the following contents:
 
-```sh
-vi /etc/xdg/autostart/classification-banner.desktop
-
+```ini
      [Desktop Entry]
      Name=Classification Banner
      Exec=/usr/bin/classification-banner
