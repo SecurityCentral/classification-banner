@@ -96,7 +96,7 @@ Note: The U.S. General Services Administration (GSA) no longer publishes
 the color values used for printing U.S. Government Standard Forms (SF)
 such as the SF-710 (Unclassified Label), SF-708 (Confidential Label),
 SF-707 (Secret Label), SF-706 (Top Secret Label), or SF-712 (Classified
-SCI Label): http://www.gsa.gov/portal/content/142623
+SCI Label): https://www.gsa.gov/colorstd
 
 However, archived copies of superseded U.S. Government documents provide
 the previously published Pantone values as well as a publicly available
