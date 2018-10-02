@@ -1,5 +1,4 @@
-Classification-Banner
-=====================
+# Classification-Banner
 
 <a href="https://scan.coverity.com/projects/securitycentral-classification-banner">
   <img alt="Coverity Scan Build Status"
@@ -21,8 +20,7 @@ Selecting the classification window and pressing the ESC key
 will temporarily hide the window for 15 seconds, it will return
 to view after that
 
-Installation
-============
+# Installation
 
 ## Fedora
 `classification-banner` can be found in the Fedora repositories and installed
@@ -44,27 +42,24 @@ To install directly from source, run the following command:
 python setup.py install
 ```
 
-Classification Banner Usage
-===========================
+# Classification Banner Usage
 
 Options should be placed in the `/etc/classification-banner/banner.conf` file.
 
-```
-message      - The classification level to display (Default: 'UNCLASSIFIED')
-foreground   - Foreground color of the text to display (Default: '#007A33' "Green")
-background   - Background color of the banner the text is against (Default: '#FFFFFF' "White")
-font         - Font face to use for the displayed text (Default: 'liberation-sans')
-size         - Size of font to use for text (Default: 'small')
-weight       - Bold or normal (Default: 'bold')
-show_top     - Show top banner (Default: True)
-show_bottom  - Show bottom banner (Default: True)
-horizontal_resolution         - Manually Set Horiztonal Resolution (OPTIONAL) [ if hres is set, vres required ]
-vertical_resolution           - Manually Set Horiztonal Resolution (OPTIONAL) [ if vres is set, hres required ]
-sys_info     - Show user and hostname in the top banner (Default: False)
-opacity      - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default 0.75)
-esc          - Enable/Disable the 'ESC to hide' message (Default: True (enabled))
-spanning     - Enable banner(s) to span across screens as a single banner (Default: False)
-```
+* `message` - The classification level to display (Default: `UNCLASSIFIED`)
+* `foreground` - Foreground color of the text to display (Default: `#007A33` "Green")
+* `background` - Background color of the banner the text is against (Default: `#FFFFFF` "White")
+* `font` - Font face to use for the displayed text (Default: `liberation-sans`)
+* `size` - Size of font to use for text (Default: `small`)
+* `weight` - Bold or normal (Default: `bold`)
+* `show_top` - Show top banner (Default: `True`)
+* `show_bottom` - Show bottom banner (Default: `True`)
+* `horizontal_resolution` - Manually Set Horiztonal Resolution (OPTIONAL) [if hres is set, vres required]
+* `vertical_resolution` - Manually Set Horiztonal Resolution (OPTIONAL) [if vres is set, hres required]
+* `sys_info` - Show user and hostname in the top banner (Default: `False`)
+* `opacity` - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default: `0.75`)
+* `esc` - Enable/Disable the 'ESC to hide' message (Default: `True` (enabled))
+* `spanning` - Enable banner(s) to span across screens as a single banner (Default: `False`)
 
 Command line options that correspond to the above settings (use `classification-banner --help` for more information):
 
@@ -85,8 +80,7 @@ Command line options that correspond to the above settings (use `classification-
 --enable-spanning
 ```
 
-Examples
-========
+# Examples
 
 These are examples for the configuration of the Classification Banner
 using the `/etc/classification-banner/banner.conf` file for various classifications
@@ -128,38 +122,49 @@ SF-706 | 255, 103,  31 | #ff671f | https://www.pantone.com/color-finder/165-C
 SF-712 | 247, 234,  72 | #f7ea48 | https://www.pantone.com/color-finder/101-C
 SF-709 | 193, 167, 226 | #c1a7e2 | https://www.pantone.com/color-finder/264-C
 
-Examples from the default `banner.conf`:
+## Examples from the default `banner.conf`:
+
+### UNCLASSIFIED (Default)
 
 ```
-Default (UNCLASSIFIED)
-
-CONFIDENTIAL
-
-    message='CONFIDENTIAL'
-    foreground='#FFFFFF'
-    background='#0033A0'
-
-SECRET
-
-    message='SECRET'
-    foreground='#FFFFFF'
-    background='#C8102E'
-
-TOP SECRET
-
-    message='TOP SECRET'
-    foreground='#FFFFFF'
-    background='#FF671F'
-
-TOP SECRET//SCI
-
-    message='TOP SECRET//SCI'
-    foreground="#000000'
-    background='#F7EA48'
+message = UNCLASSIFIED
+foreground = #FFFFFF
+background = #007A33
 ```
 
-Autostart
-=========
+### CONFIDENTIAL
+
+```
+message = CONFIDENTIAL
+foreground = #FFFFFF
+background = #0033A0
+```
+
+### SECRET
+
+```
+message = SECRET
+foreground = #FFFFFF
+background = #C8102E
+```
+
+### TOP SECRET
+
+```
+message = TOP SECRET
+foreground = #FFFFFF
+background = #FF671F
+```
+
+### TOP SECRET//SCI
+
+```
+message = TOP SECRET//SCI
+foreground = #000000
+background = #F7EA48
+```
+
+# Autostart
 
 To auto-start the classification-banner script on the GNOME Desktop,
 create the file `/etc/xdg/autostart/classification-banner.desktop`
