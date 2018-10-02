@@ -47,8 +47,8 @@ python setup.py install
 Options should be placed in the `/etc/classification-banner/banner.conf` file.
 
 * `message` - The classification level to display (Default: `UNCLASSIFIED`)
-* `foreground` - Foreground color of the text to display (Default: `#007A33` "Green")
-* `background` - Background color of the banner the text is against (Default: `#FFFFFF` "White")
+* `foreground` - Foreground color of the text to display (Default: `#FFFFFF` "White")
+* `background` - Background color of the banner the text is against (Default: `#007A33` "Green")
 * `font` - Font face to use for the displayed text (Default: `liberation-sans`)
 * `size` - Size of font to use for text (Default: `small`)
 * `weight` - Bold or normal (Default: `bold`)
