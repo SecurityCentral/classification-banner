@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 VERSION = "1.6.7"
 
 PACKAGE_VERSION = {
-    "classification-banner": "classification-banner == {}".format(VERSION),
+    "classification-banner": "classification-banner == {0}".format(VERSION),
 }
 
 
@@ -17,8 +17,8 @@ setup(
     long_description="""Classification Banner is a python script that will display the
 classification level banner of a session with a variety of
 configuration options on the primary screen.  This script can
-help government and possibly private customers display a 
-notification that sensitive material is being displayed - for 
+help government and possibly private customers display a
+notification that sensitive material is being displayed - for
 example PII or SECRET Material being processed in a graphical
 session. The script has been tested on a variety of graphical
 environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.""",
