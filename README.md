@@ -109,24 +109,28 @@ Office; 28 April 2016;
 
 https://www.gpo.gov/docs/default-source/contract-pricing/dallas/ab1724s.pdf
 
-SF-710: Pantone 356 - (Reverse printing) White on Green
-SF-708: Pantone 286 - (Reverse printing) White on Blue
-SF-707: Pantone 186 - (Reverse printing) White on Red
-SF-706: Pantone 165 - (Reverse printing) White on Orange
-SF-712: Pantone 101 - Black on Yellow
-SF-709: Pantone 264 - Black on Lavender
+* SF-710: Pantone 356 - (Reverse printing) White on Green
+* SF-708: Pantone 286 - (Reverse printing) White on Blue
+* SF-707: Pantone 186 - (Reverse printing) White on Red
+* SF-706: Pantone 165 - (Reverse printing) White on Orange
+* SF-712: Pantone 101 - Black on Yellow
+* SF-709: Pantone 264 - Black on Lavender
 
-The following are the approximate RGB and HEX values of the above Pantone
+The following are the approximate RGB and hexadecimal values of the above Pantone
 Solid Coated values as provided by the Pantone website:
 
-```
-SF-710: RGB:   0, 122,  51 / HEX: #007a33 | https://www.pantone.com/color-finder/356-C
-SF-708: RGB:   0,  51, 160 / HEX: #0033a0 | https://www.pantone.com/color-finder/286-C
-SF-707: RGB: 200,  16,  46 / HEX: #c8102e | https://www.pantone.com/color-finder/186-C
-SF-706: RGB: 255, 103,  31 / HEX: #ff671f | https://www.pantone.com/color-finder/165-C
-SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder/101-C
-SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder/264-C
+Pantone | RGB | Hex | Link
+--------|-----|-----|-----
+SF-710 |   0, 122,  51 | #007a33 | https://www.pantone.com/color-finder/356-C
+SF-708 |   0,  51, 160 | #0033a0 | https://www.pantone.com/color-finder/286-C
+SF-707 | 200,  16,  46 | #c8102e | https://www.pantone.com/color-finder/186-C
+SF-706 | 255, 103,  31 | #ff671f | https://www.pantone.com/color-finder/165-C
+SF-712 | 247, 234,  72 | #f7ea48 | https://www.pantone.com/color-finder/101-C
+SF-709 | 193, 167, 226 | #c1a7e2 | https://www.pantone.com/color-finder/264-C
 
+Examples from the default `banner.conf`:
+
+```
     Default (UNCLASSIFIED)
 
     CONFIDENTIAL
