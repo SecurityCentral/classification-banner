@@ -32,7 +32,7 @@ dnf -y install classification-banner
 ```
 
 ## RHEL
-`classification-banner` can be found in the EPEL repositories and installed
+`classification-banner` can be found in the [EPEL](https://fedoraproject.org/wiki/EPEL) repositories and installed
 via `yum`:
 ```sh
 yum -y install classification-banner
