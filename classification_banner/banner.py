@@ -20,13 +20,11 @@ except:
     sys.exit(1)
 
 try:
-    import pygtk
-    import gtk
-except ImportError:
-    try:
-        import Gtk
-    except ImportError as e:
-        raise(e)
+    import gi
+    gi.require_version('Gtk', '3.0')
+    from gi.repository import Gtk, Gdk
+except ImportError as e:
+    raise(e)
 
 
 # Returns Username
@@ -50,8 +48,8 @@ def get_host():
 class Classification_Banner:
     """Class to create and refresh the actual banner."""
 
-    def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",
-                 bgcolor="#00CC00", font="liberation-sans", size="small",
+    def __init__(self, message="UNCLASSIFIED", fgcolor="#FFFFFF",
+                 bgcolor="#007A33", font="liberation-sans", size="small",
                  weight="bold", x=0, y=0, esc=True, opacity=0.75,
                  sys_info=False):
 
@@ -72,7 +70,7 @@ class Classification_Banner:
         self.vres = y
 
         # Dynamic Resolution Scaling
-        self.monitor = gtk.gdk.Screen()
+        self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
 
         # Newer versions of pygtk have this method
@@ -82,11 +80,11 @@ class Classification_Banner:
             pass
 
         # Create Main Window
-        self.window = gtk.Window()
-        self.window.set_position(gtk.WIN_POS_CENTER)
+        self.window = Gtk.Window()
+        self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.connect("hide", self.restore)
         self.window.connect("key-press-event", self.keypress)
-        self.window.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse(bgcolor))
+        self.window.modify_bg(Gtk.StateType.NORMAL, Gdk.color_parse(bgcolor))
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
         self.window.set_property('destroy-with-parent', True)
@@ -104,47 +102,47 @@ class Classification_Banner:
         self.window.set_default_size(int(self.hres), 5)
 
         # Create Main Horizontal Box to Populate
-        self.hbox = gtk.HBox()
+        self.hbox = Gtk.HBox()
 
         # Create the Center Vertical Box
-        self.vbox_center = gtk.VBox()
-        self.center_label = gtk.Label(
+        self.vbox_center = Gtk.VBox()
+        self.center_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, message))
         self.center_label.set_use_markup(True)
-        self.center_label.set_justify(gtk.JUSTIFY_CENTER)
+        self.center_label.set_justify(Gtk.Justification.CENTER)
         self.vbox_center.pack_start(self.center_label, True, True, 0)
 
         # Create the Right-Justified Vertical Box to Populate for hostname
-        self.vbox_right = gtk.VBox()
-        self.host_label = gtk.Label(
+        self.vbox_right = Gtk.VBox()
+        self.host_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, get_host()))
         self.host_label.set_use_markup(True)
-        self.host_label.set_justify(gtk.JUSTIFY_RIGHT)
+        self.host_label.set_justify(Gtk.Justification.RIGHT)
         self.host_label.set_width_chars(20)
 
         # Create the Left-Justified Vertical Box to Populate for user
-        self.vbox_left = gtk.VBox()
-        self.user_label = gtk.Label(
+        self.vbox_left = Gtk.VBox()
+        self.user_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, get_user()))
         self.user_label.set_use_markup(True)
-        self.user_label.set_justify(gtk.JUSTIFY_LEFT)
+        self.user_label.set_justify(Gtk.Justification.LEFT)
         self.user_label.set_width_chars(20)
 
         # Create the Right-Justified Vertical Box to Populate for ESC message
-        self.vbox_esc_right = gtk.VBox()
-        self.esc_label = gtk.Label(
+        self.vbox_esc_right = Gtk.VBox()
+        self.esc_label = Gtk.Label(label=
             "<span font_family='liberation-sans' weight='normal' foreground='%s' size='xx-small'>  (ESC to hide temporarily)  </span>" %
             (fgcolor))
         self.esc_label.set_use_markup(True)
-        self.esc_label.set_justify(gtk.JUSTIFY_RIGHT)
+        self.esc_label.set_justify(Gtk.Justification.RIGHT)
         self.esc_label.set_width_chars(20)
 
         # Empty Label for formatting purposes
-        self.vbox_empty = gtk.VBox()
-        self.empty_label = gtk.Label(
+        self.vbox_empty = Gtk.VBox()
+        self.empty_label = Gtk.Label(label=
             "<span font_family='liberation-sans' weight='normal'>                 </span>")
         self.empty_label.set_use_markup(True)
         self.empty_label.set_width_chars(20)
@@ -161,7 +159,7 @@ class Classification_Banner:
 
         else:
             if esc and not sys_info:
-                self.empty_label.set_justify(gtk.JUSTIFY_LEFT)
+                self.empty_label.set_justify(Gtk.Justification.LEFT)
                 self.vbox_empty.pack_start(self.empty_label, True, True, 0)
                 self.vbox_esc_right.pack_start(self.esc_label, True, True, 0)
                 self.hbox.pack_start(self.vbox_esc_right, False, True, 0)
@@ -195,7 +193,7 @@ class Classification_Banner:
     # Press ESC to hide window for 15 seconds
     def keypress(self, widget, event=None):
         if event.keyval == 65307:
-            if not gtk.events_pending():
+            if not Gtk.events_pending():
                 self.window.iconify()
                 self.window.hide()
                 time.sleep(15)
@@ -211,7 +209,7 @@ class Display_Banner:
     """Display Classification Banner Message"""
     def __init__(self):
         # Dynamic Resolution Scaling
-        self.monitor = gtk.gdk.Screen()
+        self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
 
         # Newer versions of pygtk have this method
@@ -310,7 +308,7 @@ class Display_Banner:
 
                 else:
                     # Fail back to GTK method
-                    self.display = gtk.gdk.display_get_default()
+                    self.display = Gdk.Display.get_default()
                     self.screen = self.display.get_default_screen()
                     self.x = self.screen.get_width()
                     self.y = self.screen.get_height()
@@ -369,4 +367,4 @@ class Display_Banner:
 
 def main():
     run = Display_Banner()
-    gtk.main()
+    Gtk.main()
