@@ -9,8 +9,8 @@ Classification-Banner
 Classification Banner is a python script that will display the
 classification level banner of a session with a variety of
 configuration options on the primary screen.  This script can
-help government and possibly private customers display a 
-notification that sensitive material is being displayed - for 
+help government and possibly private customers display a
+notification that sensitive material is being displayed - for
 example PII or SECRET Material being processed in a graphical
 session. The script has been tested on a variety of graphical
 environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
@@ -89,7 +89,7 @@ based upon generally accepted color guidelines in the DoD/IC.
 Note: The U.S. General Services Administration (GSA) no longer publishes
 the color values used for printing U.S. Government Standard Forms (SF)
 such as the SF-710 (Unclassified Label), SF-708 (Confidential Label),
-SF-707 (Secret Label), SF-706 (Top Secret Label), or SF-712 (Classified 
+SF-707 (Secret Label), SF-706 (Top Secret Label), or SF-712 (Classified
 SCI Label): http://www.gsa.gov/portal/content/142623
 
 However, archived copies of superseded U.S. Government documents provide
@@ -122,36 +122,36 @@ SF-712: RGB: 247, 234,  72 / HEX: #f7ea48 | https://www.pantone.com/color-finder
 SF-709: RGB: 193, 167, 226 / HEX: #c1a7e2 | https://www.pantone.com/color-finder/264-C
 
     Default (UNCLASSIFIED)
-        
+
     CONFIDENTIAL
-    
+
         message='CONFIDENTIAL'
-	fgcolor='#FFFFFF'
+        fgcolor='#FFFFFF'
         bgcolor='#0033A0'
-    
+
     SECRET
-        
+
         message='SECRET'
         fgcolor='#FFFFFF'
         bgcolor='#C8102E'
-    
+
     TOP SECRET
-        
+
         message='TOP SECRET'
         fgcolor='#FFFFFF'
         bgcolor='#FF671F'
-        
+
     TOP SECRET//SCI
-        
+
         message='TOP SECRET//SCI'
-	fgcolor="#000000'
+        fgcolor="#000000'
         bgcolor='#F7EA48'
 ```
 
 Autostart
 =========
 
-To auto-start the classification-banner script on the GNOME Desktop, 
+To auto-start the classification-banner script on the GNOME Desktop,
 create the following file:
 
 ```sh
