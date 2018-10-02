@@ -6,7 +6,7 @@ import sys
 import os
 import argparse
 import time
-from ConfigParser import SafeConfigParser
+from configparser import SafeConfigParser
 from socket import gethostname
 
 # Global Configuration File
