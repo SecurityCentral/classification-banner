@@ -1,0 +1,21 @@
+env:
+  matrix:
+  - PYTHON=python2
+  - PYTHON=python3
+  global:
+    secure: p2YCUKqqpRO+DeJfBMhBnZ2VO8yVu/1D9AMxF6Uy7LDVYKeD+vfzVTzFIOIImaPmOtUqr0mrElOkWorsOmarnTCzx6xbPi4UbvviFxAl0fr1lHVAz7XGR8N8KQwe+D0R1nI6s9PoQ4Xjj6HB2WqA9qDFc6BU14ux9ChtX9Uq94MrwIDjpzXR1BA5BntSFYgQCbUn2Ke1E31s4ABAia9lFIjyInjUJ/mbsDe8Yt/uSc0UURm9jP/R4JjUuHc5qaYz+M/+3FfeGG0oNRIQgYM1/PfbHWIZRwhw/g8VeVU9+8OqhfsLPZFMOvyDzvyXM4AwttSRcYwuHtSeYFQCWlP/nXjcfJwfevU6QDhFDdRMOXD+zAKShLBzlotdVdCl2MrrqRRWjRCk+n3suB/OCAveYD/7Lhc2dakqRUxWJ8VE6KMVLSKTX9Nn+FIxZ2i3lJipufCHkKTNR15mOGTBMhPg4n2DQ5z0pZQTldeDetLNh1k79l3YG07UvVzozaQT0tybUwe6a/AYS0lfFU8iUn1BpL12VrLdl86kUkNtYy2LWZ7hw5d9MVrTx/7FU3VfOUm/vtyAaB/J1z8bxpLX0MjM+zAEBlVXCMj960GwT//GDhcggK8zQvUA73eQ32uhdBl7prrWxA8iHyliQmLkGykZIDVM4IsVJyHUrz3dKzxWk+Q=
+sudo: required
+language: python
+before_install:
+  - sudo apt-get install python3-setuptools
+addons:
+  coverity_scan:
+    project:
+      name: SecurityCentral/classification-banner
+      description: Displays Classification Banner for a Graphical Session
+    build_command: "/usr/bin/$PYTHON setup.py build '--executable=/usr/bin/$PYTHON
+      -s'"
+    branch_pattern: coverity_scan
+script:
+- "/usr/bin/$PYTHON setup.py build '--executable=/usr/bin/$PYTHON -s'"
+- "/usr/bin/$PYTHON setup.py test"
