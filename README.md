@@ -1,5 +1,6 @@
 # Classification-Banner
 
+[![Build Status](https://travis-ci.org/SecurityCentral/classification-banner.svg?branch=master)](https://travis-ci.org/SecurityCentral/classification-banner)
 <a href="https://scan.coverity.com/projects/securitycentral-classification-banner">
   <img alt="Coverity Scan Build Status"
        src="https://img.shields.io/coverity/scan/16706.svg"/>
