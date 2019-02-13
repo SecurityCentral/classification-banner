@@ -8,6 +8,7 @@ import argparse
 import time
 from configparser import SafeConfigParser
 from socket import gethostname
+from distutils.util import strtobool
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner/banner.conf"
@@ -281,19 +282,19 @@ class DisplayBanner:
             "--size", default=defaults["size"], help="Font size")
         parser.add_argument("--weight", default=defaults["weight"],
                             help="Set the Font weight")
-        parser.add_argument("--disable-esc", default=defaults["esc"],
+        parser.add_argument("--disable-esc", default=strtobool(defaults["esc"]),
                             dest="esc", action="store_false",
                             help="Disable the 'ESC to hide' message")
-        parser.add_argument("--hide-top", default=defaults["show_top"],
+        parser.add_argument("--hide-top", default=strtobool(defaults["show_top"]),
                             dest="show_top", action="store_false",
                             help="Disable the top banner")
-        parser.add_argument("--hide-bottom", default=defaults["show_bottom"],
+        parser.add_argument("--hide-bottom", default=strtobool(defaults["show_bottom"]),
                             dest="show_bottom", action="store_false",
                             help="Disable the bottom banner")
-        parser.add_argument("--system-info", default=defaults["sys_info"],
+        parser.add_argument("--system-info", default=strtobool(defaults["sys_info"]),
                             dest="sys_info", action="store_true",
                             help="Show user and hostname in the top banner")
-        parser.add_argument("--enable-spanning", default=defaults["spanning"],
+        parser.add_argument("--enable-spanning", default=strtobool(defaults["spanning"]),
                             dest="spanning", action="store_true",
                             help="Enable banner(s) to span across screens as a single banner")
 
