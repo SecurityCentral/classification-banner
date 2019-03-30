@@ -247,14 +247,14 @@ class DisplayBanner:
         defaults["font"] = "liberation-sans"
         defaults["size"] = "small"
         defaults["weight"] = "bold"
-        defaults["show_top"] = True
-        defaults["show_bottom"] = True
+        defaults["show_top"] = "True"
+        defaults["show_bottom"] = "True"
         defaults["horizontal_resolution"] = 0
         defaults["vertical_resolution"] = 0
-        defaults["sys_info"] = False
+        defaults["sys_info"] = "False"
         defaults["opacity"] = 0.75
-        defaults["esc"] = True
-        defaults["spanning"] = False
+        defaults["esc"] = "True"
+        defaults["spanning"] = "False"
 
         conf = SafeConfigParser()
         conf.read(CONF_FILE)
