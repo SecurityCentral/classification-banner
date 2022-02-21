@@ -6,7 +6,7 @@ import sys
 import os
 import argparse
 import time
-from configparser import SafeConfigParser
+import configparser
 from socket import gethostname
 from distutils.util import strtobool
 
@@ -256,7 +256,7 @@ class DisplayBanner:
         defaults["esc"] = "True"
         defaults["spanning"] = "False"
 
-        conf = SafeConfigParser()
+        conf = configparser.ConfigParser()
         conf.read(CONF_FILE)
         for key, val in conf.items("global"):
             defaults[key] = val
