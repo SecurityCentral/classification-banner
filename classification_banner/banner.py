@@ -46,6 +46,71 @@ def get_host():
     return host
 
 
+def configure():
+    """Read Global configuration"""
+    defaults = {}
+    defaults["message"] = "UNCLASSIFIED"
+    defaults["foreground"] = "#FFFFFF"
+    defaults["background"] = "#007A33"
+    defaults["font"] = "liberation-sans"
+    defaults["size"] = "small"
+    defaults["weight"] = "bold"
+    defaults["show_top"] = "True"
+    defaults["show_bottom"] = "True"
+    defaults["horizontal_resolution"] = 0
+    defaults["vertical_resolution"] = 0
+    defaults["sys_info"] = "False"
+    defaults["opacity"] = 0.75
+    defaults["esc"] = "True"
+    defaults["spanning"] = "False"
+
+    conf = configparser.ConfigParser()
+    conf.read(CONF_FILE)
+    for key, val in conf.items("global"):
+        defaults[key] = val
+
+    # Use the global config to set defaults for command line options
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-m", "--message", default=defaults["message"],
+                        help="Set the Classification message")
+    parser.add_argument("-f", "--fgcolor", default=defaults["foreground"],
+                        help="Set the Foreground (text) color")
+    parser.add_argument("-b", "--bgcolor", default=defaults["background"],
+                        help="Set the Background color")
+    parser.add_argument("-x", "--hres", default=defaults["horizontal_resolution"], type=int,
+                        help="Set the Horizontal Screen Resolution")
+    parser.add_argument("-y", "--vres", default=defaults["vertical_resolution"], type=int,
+                        help="Set the Vertical Screen Resolution")
+    parser.add_argument("-o", "--opacity", default=defaults["opacity"],
+                        type=float, dest="opacity",
+                        help="Set the window opacity for composted window managers")
+    parser.add_argument(
+            "--font", default=defaults["font"], help="Font type")
+    parser.add_argument(
+            "--size", default=defaults["size"], help="Font size")
+    parser.add_argument("--weight", default=defaults["weight"],
+                        help="Set the Font weight")
+    parser.add_argument("--disable-esc", default=strtobool(defaults["esc"]),
+                        dest="esc", action="store_false",
+                        help="Disable the 'ESC to hide' message")
+    parser.add_argument("--hide-top", default=strtobool(defaults["show_top"]),
+                        dest="show_top", action="store_false",
+                        help="Disable the top banner")
+    parser.add_argument("--hide-bottom", default=strtobool(defaults["show_bottom"]),
+                        dest="show_bottom", action="store_false",
+                        help="Disable the bottom banner")
+    parser.add_argument("--system-info", default=strtobool(defaults["sys_info"]),
+                        dest="sys_info", action="store_true",
+                        help="Show user and hostname in the top banner")
+    parser.add_argument("--enable-spanning", default=strtobool(defaults["spanning"]),
+                        dest="spanning", action="store_true",
+                        help="Enable banner(s) to span across screens as a single banner")
+
+    args = parser.parse_args()
+
+    return args
+
+
 # Classification Banner Class
 class ClassificationBanner:
     """Class to create and refresh the actual banner."""
@@ -69,6 +134,7 @@ class ClassificationBanner:
         """
         self.hres = x
         self.vres = y
+        # pylint: disable=consider-using-f-string
         self.css = """window label {
           background-color: %s;
 }
@@ -81,7 +147,7 @@ class ClassificationBanner:
         # Newer versions of pygtk have this method
         try:
             self.monitor.connect("monitors-changed", self.resize)
-        except AttributeError:  # nosec
+        except AttributeError:
             pass
 
         # Create Main Window
@@ -105,6 +171,7 @@ class ClassificationBanner:
 
         # Create the Center Vertical Box
         self.vbox_center = Gtk.VBox()
+        # pylint: disable=consider-using-f-string
         self.center_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, message))
@@ -114,6 +181,7 @@ class ClassificationBanner:
 
         # Create the Right-Justified Vertical Box to Populate for hostname
         self.vbox_right = Gtk.VBox()
+        # pylint: disable=consider-using-f-string
         self.host_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, get_host()))
@@ -123,6 +191,7 @@ class ClassificationBanner:
 
         # Create the Left-Justified Vertical Box to Populate for user
         self.vbox_left = Gtk.VBox()
+        # pylint: disable=consider-using-f-string
         self.user_label = Gtk.Label(
             "<span font_family='%s' weight='%s' foreground='%s' size='%s'>%s</span>" %
             (font, weight, fgcolor, size, get_user()))
@@ -132,7 +201,7 @@ class ClassificationBanner:
 
         # Create the Right-Justified Vertical Box to Populate for ESC message
         self.vbox_esc_right = Gtk.VBox()
-        # pylint: disable=line-too-long
+        # pylint: disable=line-too-long,consider-using-f-string
         self.esc_label = Gtk.Label(label="<span font_family='liberation-sans' weight='normal' foreground='%s' size='xx-small'>  (ESC to hide temporarily)  </span>" %  # noqa: E501
                                    (fgcolor))
         self.esc_label.set_use_markup(True)
@@ -236,72 +305,8 @@ class DisplayBanner:
             pass
 
         # Launch Banner
-        self.config = self.configure()
+        self.config = configure()
         self.execute(self.config)
-
-    def configure(self):
-        """Read Global configuration"""
-        defaults = {}
-        defaults["message"] = "UNCLASSIFIED"
-        defaults["foreground"] = "#FFFFFF"
-        defaults["background"] = "#007A33"
-        defaults["font"] = "liberation-sans"
-        defaults["size"] = "small"
-        defaults["weight"] = "bold"
-        defaults["show_top"] = "True"
-        defaults["show_bottom"] = "True"
-        defaults["horizontal_resolution"] = 0
-        defaults["vertical_resolution"] = 0
-        defaults["sys_info"] = "False"
-        defaults["opacity"] = 0.75
-        defaults["esc"] = "True"
-        defaults["spanning"] = "False"
-
-        conf = configparser.ConfigParser()
-        conf.read(CONF_FILE)
-        for key, val in conf.items("global"):
-            defaults[key] = val
-
-        # Use the global config to set defaults for command line options
-        parser = argparse.ArgumentParser()
-        parser.add_argument("-m", "--message", default=defaults["message"],
-                            help="Set the Classification message")
-        parser.add_argument("-f", "--fgcolor", default=defaults["foreground"],
-                            help="Set the Foreground (text) color")
-        parser.add_argument("-b", "--bgcolor", default=defaults["background"],
-                            help="Set the Background color")
-        parser.add_argument("-x", "--hres", default=defaults["horizontal_resolution"], type=int,
-                            help="Set the Horizontal Screen Resolution")
-        parser.add_argument("-y", "--vres", default=defaults["vertical_resolution"], type=int,
-                            help="Set the Vertical Screen Resolution")
-        parser.add_argument("-o", "--opacity", default=defaults["opacity"],
-                            type=float, dest="opacity",
-                            help="Set the window opacity for composted window managers")
-        parser.add_argument(
-            "--font", default=defaults["font"], help="Font type")
-        parser.add_argument(
-            "--size", default=defaults["size"], help="Font size")
-        parser.add_argument("--weight", default=defaults["weight"],
-                            help="Set the Font weight")
-        parser.add_argument("--disable-esc", default=strtobool(defaults["esc"]),
-                            dest="esc", action="store_false",
-                            help="Disable the 'ESC to hide' message")
-        parser.add_argument("--hide-top", default=strtobool(defaults["show_top"]),
-                            dest="show_top", action="store_false",
-                            help="Disable the top banner")
-        parser.add_argument("--hide-bottom", default=strtobool(defaults["show_bottom"]),
-                            dest="show_bottom", action="store_false",
-                            help="Disable the bottom banner")
-        parser.add_argument("--system-info", default=strtobool(defaults["sys_info"]),
-                            dest="sys_info", action="store_true",
-                            help="Show user and hostname in the top banner")
-        parser.add_argument("--enable-spanning", default=strtobool(defaults["spanning"]),
-                            dest="spanning", action="store_true",
-                            help="Enable banner(s) to span across screens as a single banner")
-
-        args = parser.parse_args()
-
-        return args
 
     def execute(self, options):
         """Launch the Classification Banner Window(s)"""
@@ -382,7 +387,7 @@ class DisplayBanner:
 
     def resize(self):
         """Relaunch the Classification Banner on Screen Resize"""
-        self.config = self.configure()
+        self.config = configure()
         self.execute(self.config)
 
         return True
