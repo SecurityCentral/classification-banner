@@ -1,10 +1,6 @@
 # Classification-Banner
 
-[![Build Status](https://travis-ci.org/SecurityCentral/classification-banner.svg?branch=master)](https://travis-ci.org/SecurityCentral/classification-banner)
-<a href="https://scan.coverity.com/projects/securitycentral-classification-banner">
-  <img alt="Coverity Scan Build Status"
-       src="https://img.shields.io/coverity/scan/16706.svg"/>
-</a>
+[![Python linting](https://github.com/SecurityCentral/classification-banner/actions/workflows/python-linting.yaml/badge.svg?branch=main)](https://github.com/SecurityCentral/classification-banner/actions/workflows/python-linting.yaml)
 
 Classification Banner is a python script that will display the
 classification level banner of a session with a variety of
