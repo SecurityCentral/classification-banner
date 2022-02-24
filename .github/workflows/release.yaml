@@ -12,8 +12,9 @@ jobs:
       - uses: actions/checkout@v2
       - name: Release artifacts to GitHub
         run: |
-          tar -cvzf classification-banner-${TAG}.tar.gz .
-          gh release upload $TAG ./classification-banner*.tar.gz
+          mkdir archive
+          tar --exclude .github --exclude archive --exclude .git -cvzf ./archive/classification-banner-${TAG}.tar.gz .
+          gh release upload $TAG ./archive/classification-banner*.tar.gz
         env:
           TAG: ${{ github.event.release.tag_name }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
