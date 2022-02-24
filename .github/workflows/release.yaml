@@ -1,0 +1,20 @@
+name: Upload Release Archive
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Release artifacts to GitHub
+        run: |
+          tar -cvzf classification-banner-${TAG}.tar.gz .
+          gh release upload $TAG ./classification-banner*.tar.gz
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
