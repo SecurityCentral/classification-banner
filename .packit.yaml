@@ -1,0 +1,22 @@
+downstream_package_name: classification-banner
+upstream_package_name: classification-banner
+specfile_path: banner.spec
+
+jobs:
+- job: copr_build
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-all-x86_64
+    - epel-8-x86_64
+    - epel-9-x86_64
+    - centos-stream-8-x86_64
+    - centos-stream-9-x86_64
+
+- job: tests
+  trigger: pull_request
+  metadata:
+    targets:
+    - fedora-all-x86_64
+    - centos-stream-8-x86_64
+    - centos-stream-9-x86_64
