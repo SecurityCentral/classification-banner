@@ -1,11 +1,11 @@
 Name:           classification-banner
-Version:        1.7.0
-Release:        14%{?dist}
+Version:        1.7.1
+Release:        14.20220409223256181383.py3_egg_Test.22.gd2eb664%{?dist}
 Summary:        Displays Classification Banner for a Graphical Session
 
 License:        GPLv2+
 URL:            https://github.com/SecurityCentral/classification-banner
-Source0:        %{URL}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        classification-banner-1.7.1.tar.gz
 
 BuildArch:      noarch
 BuildRequires:  python3-setuptools
@@ -28,7 +28,7 @@ session. The script has been tested on a variety of graphical
 environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n classification-banner-1.7.1
 
 %build
 %py3_build
@@ -55,7 +55,7 @@ export DISPLAY=":0.0"
 %license LICENSE
 %doc README.md AUTHOR Contributors.md
 %{python3_sitelib}/classification_banner
-%{python3_sitelib}/classification_banner-%{version}-py%{python3_version}.egg-info
+%{python3_sitelib}/classification_banner-*.egg-info/
 
 %config(noreplace) %{_sysconfdir}/%{name}/banner.conf
 %config(noreplace) %{_sysconfdir}/xdg/autostart/classification-banner.desktop
@@ -63,3 +63,51 @@ export DISPLAY=":0.0"
 %{_datadir}/%{name}/%{name}-screenshot.png
 
 %changelog
+* Sat Apr 09 2022 Gabe <redhatrises@gmail.com> - 1.7.1-14.20220409223256181383.py3_egg_Test.22.gd2eb664
+- Fix egg-info dir (Gabe)
+- Fix SPEC name (Gabe)
+- Add packit config (Gabe)
+- Update tar handling (Gabe)
+- Add release action (Gabe)
+- Use GH action linting badge in readme (Gabe)
+- Remove Travis CI (Gabe)
+- More pylint fixes (Gabe)
+- Python linting fixes and configuration (Gabe)
+- Add flake8 and pylint config (Gabe)
+- Update deprecated python3-isms (Gabe)
+- Add python linting (Gabe)
+- Add rpm spec file (Gabe)
+
+* Sat Apr 09 2022 Gabe <redhatrises@gmail.com> - 1.7.1-14.20220409223219944840.py3_egg_Test.22.gd2eb664
+- Fix egg-info dir (Gabe)
+- Fix SPEC name (Gabe)
+- Add packit config (Gabe)
+- Update tar handling (Gabe)
+- Add release action (Gabe)
+- Use GH action linting badge in readme (Gabe)
+- Remove Travis CI (Gabe)
+- More pylint fixes (Gabe)
+- Python linting fixes and configuration (Gabe)
+- Add flake8 and pylint config (Gabe)
+- Update deprecated python3-isms (Gabe)
+- Add python linting (Gabe)
+- Add rpm spec file (Gabe)
+
+* Sat Apr 09 2022 Gabe <redhatrises@gmail.com> - 1.7.1-14.20220409223031295745.py3_egg_Test.22.gd2eb664
+- Fix egg-info dir (Gabe)
+- Fix SPEC name (Gabe)
+- Add packit config (Gabe)
+- Update tar handling (Gabe)
+- Add release action (Gabe)
+- Use GH action linting badge in readme (Gabe)
+- Remove Travis CI (Gabe)
+- More pylint fixes (Gabe)
+- Python linting fixes and configuration (Gabe)
+- Add flake8 and pylint config (Gabe)
+- Update deprecated python3-isms (Gabe)
+- Add python linting (Gabe)
+- Add rpm spec file (Gabe)
+
+* Sat Apr 09 2022 Gabe <redhatrises@gmail.com> - 1.7.0-14.20220409163004025426.py3_egg_Test
+- Development snapshot (d2eb664e)
+
