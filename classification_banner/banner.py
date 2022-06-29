@@ -1,14 +1,14 @@
 #
-# Copyright (C) 2018 SecurityCentral Contributors. See LICENSE for license
+# Copyright (C) 2022 SecurityCentral Contributors. See LICENSE for license
 #
 
 import sys
 import os
 import argparse
 import time
+import re
 import configparser
 from socket import gethostname
-from distutils.util import strtobool
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner/banner.conf"
@@ -55,20 +55,28 @@ def configure():
     defaults["font"] = "liberation-sans"
     defaults["size"] = "small"
     defaults["weight"] = "bold"
-    defaults["show_top"] = "True"
-    defaults["show_bottom"] = "True"
+    defaults["show_top"] = True
+    defaults["show_bottom"] = True
     defaults["horizontal_resolution"] = 0
     defaults["vertical_resolution"] = 0
-    defaults["sys_info"] = "False"
+    defaults["sys_info"] = False
     defaults["opacity"] = 0.75
-    defaults["esc"] = "True"
-    defaults["spanning"] = "False"
+    defaults["esc"] = True
+    defaults["spanning"] = False
 
     conf = configparser.ConfigParser()
     conf.read(CONF_FILE)
     for key, val in conf.items("global"):
-        defaults[key] = val
+        if re.match(r"^[0-9]+$", val):
+            defaults[key] = conf.getint("global", key)
+        elif re.match(r"^[0-9]+.[0-9]+$", val):
+            defaults[key] = conf.getfloat("global", key)
+        elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
+            defaults[key] = conf.getboolean("global", key)
+        else:
+            defaults[key] = val
 
+    print(defaults["sys_info"])
     # Use the global config to set defaults for command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--message", default=defaults["message"],
@@ -90,19 +98,19 @@ def configure():
             "--size", default=defaults["size"], help="Font size")
     parser.add_argument("--weight", default=defaults["weight"],
                         help="Set the Font weight")
-    parser.add_argument("--disable-esc", default=strtobool(defaults["esc"]),
+    parser.add_argument("--disable-esc", default=defaults["esc"],
                         dest="esc", action="store_false",
                         help="Disable the 'ESC to hide' message")
-    parser.add_argument("--hide-top", default=strtobool(defaults["show_top"]),
+    parser.add_argument("--hide-top", default=defaults["show_top"],
                         dest="show_top", action="store_false",
                         help="Disable the top banner")
-    parser.add_argument("--hide-bottom", default=strtobool(defaults["show_bottom"]),
+    parser.add_argument("--hide-bottom", default=defaults["show_bottom"],
                         dest="show_bottom", action="store_false",
                         help="Disable the bottom banner")
-    parser.add_argument("--system-info", default=strtobool(defaults["sys_info"]),
+    parser.add_argument("--system-info", default=defaults["sys_info"],
                         dest="sys_info", action="store_true",
                         help="Show user and hostname in the top banner")
-    parser.add_argument("--enable-spanning", default=strtobool(defaults["spanning"]),
+    parser.add_argument("--enable-spanning", default=defaults["spanning"],
                         dest="spanning", action="store_true",
                         help="Enable banner(s) to span across screens as a single banner")
 
