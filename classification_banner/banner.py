@@ -216,9 +216,11 @@ class ClassificationBanner:  # pylint: disable=too-many-instance-attributes,old-
         """Press ESC to hide window for X seconds"""
         if event.keyval == 65307:
             if not gtk.events_pending():
+                old_x, old_y = self.window.get_position()
                 self.window.iconify()
                 self.window.hide()
                 time.sleep(self.esc_timeout)
+                self.window.move(old_x, old_y)
                 self.window.show()
                 self.window.deiconify()
                 self.window.present()
@@ -320,46 +322,29 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
     # Launch the Classification Banner Window(s)
     def execute(self, options):
         """Launch the Classification Banner Window(s)"""
-        self.num_monitor = 0
+        self.num_monitor = int(os.popen("xrandr | grep ' connected ' | wc -l").readlines()[0])
 
         if options.hres == 0 or options.vres == 0:
-            # Try Xrandr to determine primary monitor resolution
-            try:
-                self.screen = os.popen("xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
-                self.x = self.screen.split('x')[0]  # pylint: disable=invalid-name
-                self.y = self.screen.split('x')[1].split('+')[0]  # pylint: disable=invalid-name
+            self.display = gtk.gdk.display_get_default()
+            self.screen = self.display.get_default_screen()
 
-            except IndexError:
-                try:
-                    self.screen = os.popen("xrandr | grep ' current ' | awk '{ print $8$9$10+0 }'").readlines()[0]
-                    self.x = self.screen.split('x')[0]
-                    self.y = self.screen.split('x')[1].split('+')[0]
+            if not options.spanning and self.num_monitor > 1:
+                for monitor in range(self.num_monitor):
+                    mon_geo = self.screen.get_monitor_geometry(monitor)
+                    self.x_location, self.y_location, self.x, self.y = (mon_geo.x, mon_geo.y, mon_geo.width, mon_geo.height)  # pylint: disable=invalid-name
+                    self.banners(options)
+                return
 
-                except IndexError:
-                    self.screen = os.popen("xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]  # pylint: disable=anomalous-backslash-in-string
-                    self.x = self.screen.split('x')[0]
-                    self.y = self.screen.split('x')[1].split('+')[0]
-
-                else:
-                    # Fail back to GTK method
-                    self.display = gtk.gdk.display_get_default()
-                    self.screen = self.display.get_default_screen()
-                    self.x = self.screen.get_width()
-                    self.y = self.screen.get_height()
+            self.x = self.screen.get_width()
+            self.y = self.screen.get_height()
         else:
-            # Resoultion Set Staticly
+            # Resolution Set Staticly
             self.x = options.hres
             self.y = options.vres
 
-        if not options.spanning and self.num_monitor > 1:
-            for monitor in range(self.num_monitor):
-                mon_geo = self.screen.get_monitor_geometry(monitor)
-                self.x_location, self.y_location, self.x, self.y = mon_geo
-                self.banners(options)
-        else:
-            self.x_location = 0
-            self.y_location = 0
-            self.banners(options)
+        self.x_location = 0
+        self.y_location = 0
+        self.banners(options)
 
     def banners(self, options):
         """Set banner configuration"""
