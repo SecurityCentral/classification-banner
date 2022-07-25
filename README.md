@@ -1,10 +1,5 @@
 # Classification-Banner
 
-<a href="https://scan.coverity.com/projects/securitycentral-classification-banner">
-  <img alt="Coverity Scan Build Status"
-       src="https://img.shields.io/coverity/scan/16706.svg"/>
-</a>
-
 Classification Banner is a python script that will display the
 classification level banner of a session with a variety of
 configuration options on the primary screen.  This script can
@@ -17,8 +12,8 @@ environments such as GNOME2, GNOME3, KDE, twm, icewm, and Cinnamon.
 Python script verified working on Red Hat Enterprise Linux and Fedora.
 
 Selecting the classification window and pressing the ESC key
-will temporarily hide the window for 15 seconds, it will return
-to view after that
+will temporarily hide the window for a configurable number of seconds,
+it will return to view after that
 
 # Installation
 
@@ -59,6 +54,7 @@ Options should be placed in the `/etc/classification-banner/banner.conf` file.
 * `sys_info` - Show user and hostname in the top banner (Default: `False`)
 * `opacity` - Sets opacity - for composted window managers only (OPTIONAL) [float - range 0 .. 1] (Default: `0.75`)
 * `esc` - Enable/Disable the 'ESC to hide' message (Default: `True` (enabled))
+* `esc_timeout` - Configure how long the 'ESC' key will hide the classification banner (Default: 15s)
 * `spanning` - Enable banner(s) to span across screens as a single banner (Default: `False`)
 
 Command line options that correspond to the above settings (use `classification-banner --help` for more information):

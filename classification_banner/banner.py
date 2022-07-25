@@ -15,6 +15,8 @@ from socket import gethostname
 
 # Global Configuration File
 CONF_FILE = "/etc/classification-banner/banner.conf"
+MAX_ESC_TIMEOUT = 60
+MIN_ESC_TIMEOUT = 1
 
 # Check if DISPLAY variable is set
 try:
@@ -24,11 +26,11 @@ except OSError:
     sys.exit(1)
 
 try:
-    import pygtk
-    import gtk
+    import pygtk  # pylint: disable=unused-import
+    import gtk  # pylint: disable=unused-import
 except ImportError:
     try:
-        import Gtk
+        import Gtk  # pylint: disable=unused-import
     except ImportError as err:
         raise err
 
@@ -58,8 +60,8 @@ class ClassificationBanner:  # pylint: disable=too-many-instance-attributes,old-
 
     def __init__(self, message="UNCLASSIFIED", fgcolor="#000000",   # pylint: disable=invalid-name,too-many-arguments,too-many-statements
                  bgcolor="#00CC00", font="liberation-sans", size="small",
-                 weight="bold", x=0, y=0, esc=True, opacity=0.75,
-                 sys_info=False):
+                 weight="bold", x=0, y=0, esc=True, esc_timeout=15,
+                 opacity=0.75, sys_info=False):
 
         """Set up and display the main window
 
@@ -74,8 +76,17 @@ class ClassificationBanner:  # pylint: disable=too-many-instance-attributes,old-
         vres    -- Vertical Screen Resolution (int) [ requires hres ]
         opacity -- Opacity of window (float) [0 .. 1, default 0.75]
         """
+
+        if esc_timeout < MIN_ESC_TIMEOUT:
+            sanitized_timeout = MIN_ESC_TIMEOUT
+        elif esc_timeout > MAX_ESC_TIMEOUT:
+            sanitized_timeout = MAX_ESC_TIMEOUT
+        else:
+            sanitized_timeout = esc_timeout
+
         self.hres = x
         self.vres = y
+        self.esc_timeout = sanitized_timeout
 
         # Dynamic Resolution Scaling
         self.monitor = gtk.gdk.Screen()
@@ -202,12 +213,12 @@ class ClassificationBanner:  # pylint: disable=too-many-instance-attributes,old-
 
     # Press ESC to hide window for 15 seconds
     def keypress(self, widget, event=None):  # pylint: disable=unused-argument
-        """Press ESC to hide window for 15 seconds"""
+        """Press ESC to hide window for X seconds"""
         if event.keyval == 65307:
             if not gtk.events_pending():
                 self.window.iconify()
                 self.window.hide()
-                time.sleep(15)
+                time.sleep(self.esc_timeout)
                 self.window.show()
                 self.window.deiconify()
                 self.window.present()
@@ -234,7 +245,7 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
         self.execute(self.config)
 
     # Read Global configuration
-    def configure(self):
+    def configure(self):  # pylint: disable=no-self-use
         """Read Global configuration"""
         defaults = {}
         defaults["message"] = "UNCLASSIFIED"
@@ -250,6 +261,7 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
         defaults["sys_info"] = False
         defaults["opacity"] = 0.75
         defaults["esc"] = True
+        defaults["esc_timeout"] = 15
         defaults["spanning"] = False
 
         conf = SafeConfigParser()
@@ -286,6 +298,8 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
         parser.add_argument("--disable-esc", default=defaults["esc"],
                             dest="esc", action="store_false",
                             help="Disable the 'ESC to hide' message")
+        parser.add_argument("--esc-timeout", default=defaults["esc_timeout"], type=int,
+                            help="Configure how long 'ESC' will hide the classification bar")
         parser.add_argument("--hide-top", default=defaults["show_top"],
                             dest="show_top", action="store_false",
                             help="Disable the top banner")
@@ -360,6 +374,7 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
                 self.x,
                 self.y,
                 options.esc,
+                options.esc_timeout,
                 options.opacity,
                 options.sys_info)
             top.window.move(self.x_location, self.y_location)
@@ -375,6 +390,7 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
                 self.x,
                 self.y,
                 options.esc,
+                options.esc_timeout,
                 options.opacity)
             bottom.window.move(self.x_location, int(bottom.vres))
 
