@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2018 SecurityCentral Contributors. See LICENSE for license
+# Copyright (C) 2022 SecurityCentral Contributors. See LICENSE for license
 #
 
 """Python Scritp to display classification level banner of a session"""
@@ -9,6 +9,7 @@ import sys
 import os
 import argparse
 import time
+import re
 from ConfigParser import SafeConfigParser
 from socket import gethostname
 
@@ -254,7 +255,14 @@ class DisplayBanner:  # pylint: disable=old-style-class,too-many-instance-attrib
         conf = SafeConfigParser()
         conf.read(CONF_FILE)
         for key, val in conf.items("global"):
-            defaults[key] = val
+            if re.match(r"^[0-9]+$", val):
+                defaults[key] = conf.getint("global", key)
+            elif re.match(r"^[0-9]+.[0-9]+$", val):
+                defaults[key] = conf.getfloat("global", key)
+            elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
+                defaults[key] = conf.getboolean("global", key)
+            else:
+                defaults[key] = val
 
         # Use the global config to set defaults for command line options
         parser = argparse.ArgumentParser()
