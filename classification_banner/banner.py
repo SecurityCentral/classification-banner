@@ -49,9 +49,9 @@ def get_host():
 def configure():
     """Read Global configuration"""
     defaults = {}
-    defaults["message"] = "UNCLASSIFIED"
-    defaults["foreground"] = "#FFFFFF"
-    defaults["background"] = "#007A33"
+    defaults["message"] = "NOT CONFIGURED"
+    defaults["foreground"] = "#000000"
+    defaults["background"] = "#FFFFFF"
     defaults["font"] = "liberation-sans"
     defaults["size"] = "small"
     defaults["weight"] = "bold"
