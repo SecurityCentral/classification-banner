@@ -339,17 +339,18 @@ class DisplayBanner:
                     self.y = screen.split('x')[1].split('+')[0]
 
                 except IndexError:
-                    self.screen = os.popen(  # nosec
-                        r"/usr/bin/xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
-                    self.x = self.screen.split('x')[0]
-                    self.y = self.screen.split('x')[1].split('+')[0]
+                    try:
+                        self.screen = os.popen(  # nosec
+                            r"/usr/bin/xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+                        self.x = self.screen.split('x')[0]
+                        self.y = self.screen.split('x')[1].split('+')[0]
 
-                else:
-                    # Fail back to GTK method
-                    self.display = Gdk.Display.get_default()
-                    self.screen = self.display.get_default_screen()
-                    self.x = self.screen.get_width()
-                    self.y = self.screen.get_height()
+                    except:
+                        # Fail back to GTK method
+                        self.display = Gdk.Display.get_default()
+                        self.screen = self.display.get_default_screen()
+                        self.x = self.screen.get_width()
+                        self.y = self.screen.get_height()
         else:
             # Resoultion Set Staticly
             self.x = options.hres
