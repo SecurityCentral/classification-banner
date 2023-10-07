@@ -77,7 +77,6 @@ def configure():
             else:
                 defaults[key] = val
 
-    print(defaults["sys_info"])
     # Use the global config to set defaults for command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--message", default=defaults["message"],
