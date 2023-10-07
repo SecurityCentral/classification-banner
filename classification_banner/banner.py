@@ -66,15 +66,16 @@ def configure():
 
     conf = configparser.ConfigParser()
     conf.read(CONF_FILE)
-    for key, val in conf.items("global"):
-        if re.match(r"^[0-9]+$", val):
-            defaults[key] = conf.getint("global", key)
-        elif re.match(r"^[0-9]+.[0-9]+$", val):
-            defaults[key] = conf.getfloat("global", key)
-        elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
-            defaults[key] = conf.getboolean("global", key)
-        else:
-            defaults[key] = val
+    if conf.has_section("global"):
+        for key, val in conf.items("global"):
+            if re.match(r"^[0-9]+$", val):
+                defaults[key] = conf.getint("global", key)
+            elif re.match(r"^[0-9]+.[0-9]+$", val):
+                defaults[key] = conf.getfloat("global", key)
+            elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
+                defaults[key] = conf.getboolean("global", key)
+            else:
+                defaults[key] = val
 
     print(defaults["sys_info"])
     # Use the global config to set defaults for command line options
