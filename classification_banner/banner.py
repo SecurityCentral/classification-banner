@@ -274,7 +274,7 @@ class ClassificationBanner:
         if isinstance(widget, Gtk.Container):
             widget.forall(self.apply_css, provider)
 
-    def restore(self):
+    def restore(self, *_):
         """Restore Minimized Window"""
         self.window.deiconify()
         self.window.present()
@@ -287,7 +287,7 @@ class ClassificationBanner:
 
         return True
 
-    def keypress(self, event=None):
+    def keypress(self, widget=None, event=None):
         """Press ESC to hide window for 15 seconds"""
         if event.keyval == 65307:
             if not Gtk.events_pending():
