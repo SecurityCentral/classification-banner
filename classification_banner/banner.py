@@ -67,6 +67,9 @@ def configure():
     conf = configparser.ConfigParser()
     conf.read(CONF_FILE)
     if conf.has_section("global"):
+        unrecognized = [ key for key, _ in conf.items("global") if key not in defaults.keys() ]
+        if len(unrecognized) > 0:
+            print("The following options in the {} were unrecognized:\n{}".format(CONF_FILE, unrecognized))
         for key, val in conf.items("global"):
             if re.match(r"^[0-9]+$", val):
                 defaults[key] = conf.getint("global", key)
