@@ -326,7 +326,7 @@ class DisplayBanner:
 
         # Newer versions of pygtk have this method
         try:
-            self.monitor.connet("monitors-changed", self.resize)
+            self.monitor.connect("monitors-changed", self.resize)
         except AttributeError:
             pass
 
