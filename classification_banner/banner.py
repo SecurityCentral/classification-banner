@@ -6,6 +6,7 @@ import sys
 import os
 import argparse
 import time
+import threading
 import re
 import configparser
 from socket import gethostname
@@ -24,7 +25,7 @@ except KeyError:
 try:
     import gi
     gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk
+    from gi.repository import Gtk, Gdk, GLib
 except ImportError as e:
     raise e
 
@@ -151,6 +152,8 @@ class ClassificationBanner:
 }
 """ % bgcolor
 
+        self.hidden = False
+
         # Dynamic Resolution Scaling
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
@@ -274,10 +277,22 @@ class ClassificationBanner:
         if isinstance(widget, Gtk.Container):
             widget.forall(self.apply_css, provider)
 
+    def _restore(self):
+        """
+        Restore an intentionally hidden banner.
+
+        UI functions called here are wrapped in `GLib.idle_add` because this
+        function may be called from a background thread.
+        """
+        self.hidden = False
+        GLib.idle_add(self.restore)
+
     def restore(self, *_):
         """Restore Minimized Window"""
-        self.window.deiconify()
-        self.window.present()
+        if not self.hidden:
+            self.window.show()
+            self.window.deiconify()
+            self.window.present()
 
         return True
 
@@ -290,16 +305,13 @@ class ClassificationBanner:
     def keypress(self, widget=None, event=None):
         """Press ESC to hide window for 15 seconds"""
         if event.keyval == 65307:
-            if not Gtk.events_pending():
+            if not Gtk.events_pending() and not self.hidden:
+                self.hidden = True
                 self.window.iconify()
                 self.window.hide()
-                time.sleep(15)
-                self.window.show()
-                self.window.deiconify()
-                self.window.present()
+                threading.Timer(15, self._restore).start()
 
         return True
-
 
 class DisplayBanner:
     """Display Classification Banner Message"""
