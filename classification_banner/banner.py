@@ -327,6 +327,9 @@ class DisplayBanner:
         num_monitors = self.display.get_n_monitors()
 
         if options.hres == 0 or options.vres == 0:
+            if options.hres != 0 or options.vres != 0:
+                print("hres or vres specified, but not both, ignoring...")
+
             # Try Xrandr to determine primary monitor resolution
             try:
                 screen = os.popen(  # nosec
