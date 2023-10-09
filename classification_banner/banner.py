@@ -5,8 +5,6 @@
 import sys
 import os
 import argparse
-import time
-import threading
 import re
 import configparser
 from socket import gethostname
@@ -281,11 +279,12 @@ class ClassificationBanner:
         """
         Restore an intentionally hidden banner.
 
-        UI functions called here are wrapped in `GLib.idle_add` because this
-        function may be called from a background thread.
+        This method returns False intentionally to destroy the timeout it is
+        called by.
         """
         self.hidden = False
         self.restore()
+        return False
 
     def restore(self, *_):
         """Restore Minimized Window"""
@@ -309,7 +308,7 @@ class ClassificationBanner:
                 self.hidden = True
                 self.window.iconify()
                 self.window.hide()
-                threading.Timer(15, self._restore).start()
+                GLib.timeout_add(15000, self._restore)
 
         return True
 
