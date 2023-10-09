@@ -285,7 +285,7 @@ class ClassificationBanner:
         function may be called from a background thread.
         """
         self.hidden = False
-        GLib.idle_add(self.restore)
+        self.restore()
 
     def restore(self, *_):
         """Restore Minimized Window"""
