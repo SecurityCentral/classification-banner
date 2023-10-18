@@ -66,9 +66,14 @@ def configure():
     conf = configparser.ConfigParser()
     conf.read(CONF_FILE)
     if conf.has_section("global"):
-        unrecognized = [ key for key, _ in conf.items("global") if key not in defaults.keys() ]
+        known_keys = defaults.keys()
+        unrecognized = [
+            key for key, _ in conf.items("global") if key not in known_keys
+        ]
         if len(unrecognized) > 0:
-            print("The following options in the {} were unrecognized:\n{}".format(CONF_FILE, unrecognized))
+            print(
+                "The following options in the {CONF_FILE} were unrecognized:\n{unrecognized}"
+            )
         for key, val in conf.items("global"):
             if re.match(r"^[0-9]+$", val):
                 defaults[key] = conf.getint("global", key)
@@ -301,7 +306,7 @@ class ClassificationBanner:
 
         return True
 
-    def keypress(self, widget=None, event=None):
+    def keypress(self, _widget=None, event=None):
         """Press ESC to hide window for 15 seconds"""
         if event.keyval == 65307:
             if not Gtk.events_pending() and not self.hidden:
@@ -311,6 +316,7 @@ class ClassificationBanner:
                 GLib.timeout_add(15000, self._restore)
 
         return True
+
 
 class DisplayBanner:
     """Display Classification Banner Message"""
@@ -362,7 +368,7 @@ class DisplayBanner:
                         self.x = self.screen.split('x')[0]
                         self.y = self.screen.split('x')[1].split('+')[0]
 
-                    except:
+                    except IndexError:
                         # Fail back to GTK method
                         self.display = Gdk.Display.get_default()
                         self.screen = self.display.get_default_screen()
