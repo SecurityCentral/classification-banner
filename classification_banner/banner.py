@@ -267,7 +267,7 @@ class ClassificationBanner:
         self.apply_css(self.window, provider)
 
         try:
-            self.window.set_opacit(opacity)
+            self.window.set_opacity(opacity)
         except AttributeError:  # nosec
             pass
 
