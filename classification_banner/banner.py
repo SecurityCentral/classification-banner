@@ -72,7 +72,7 @@ def configure():
         ]
         if len(unrecognized) > 0:
             print(
-                "The following options in the {CONF_FILE} were unrecognized:\n{unrecognized}"
+                f"The following options in the {CONF_FILE} were unrecognized:\n{unrecognized}"
             )
         for key, val in conf.items("global"):
             if re.match(r"^[0-9]+$", val):
