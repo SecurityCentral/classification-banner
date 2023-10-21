@@ -306,6 +306,9 @@ class DisplayBanner:
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
 
+        self.display = Gdk.Display.get_default()
+        self.screen = self.display.get_default_screen()
+
         # Newer versions of pygtk have this method
         try:
             self.monitor.connet("monitors-changed", self.resize)
@@ -318,22 +321,22 @@ class DisplayBanner:
 
     def execute(self, options):
         """Launch the Classification Banner Window(s)"""
-        self.num_monitor = 0
+        num_monitors = self.display.get_n_monitors()
 
         if options.hres == 0 or options.vres == 0:
             # Try Xrandr to determine primary monitor resolution
             try:
-                self.screen = os.popen(  # nosec
+                screen = os.popen(  # nosec
                     "/usr/bin/xrandr | grep ' connected ' | awk '{ print $3 }'").readlines()[0]
-                self.x = self.screen.split('x')[0]
-                self.y = self.screen.split('x')[1].split('+')[0]
+                self.x = screen.split('x')[0]
+                self.y = screen.split('x')[1].split('+')[0]
 
             except IndexError:
                 try:
-                    self.screen = os.popen(  # nosec
+                    screen = os.popen(  # nosec
                         "/usr/bin/xrandr | grep ' current ' | awk '{ print $8$9$10+0 }'").readlines()[0]
-                    self.x = self.screen.split('x')[0]
-                    self.y = self.screen.split('x')[1].split('+')[0]
+                    self.x = screen.split('x')[0]
+                    self.y = screen.split('x')[1].split('+')[0]
 
                 except IndexError:
                     self.screen = os.popen(  # nosec
@@ -352,10 +355,10 @@ class DisplayBanner:
             self.x = options.hres
             self.y = options.vres
 
-        if not options.spanning and self.num_monitor > 1:
-            for monitor in range(self.num_monitor):
+        if not options.spanning and num_monitors > 1:
+            for monitor in range(num_monitors):
                 mon_geo = self.screen.get_monitor_geometry(monitor)
-                self.x_location, self.y_location, self.x, self.y = mon_geo
+                self.x_location, self.y_location, self.x, self.y = mon_geo.x, mon_geo.y, mon_geo.width, mon_geo.height
                 self.banners(options)
         else:
             self.x_location = 0
@@ -391,7 +394,8 @@ class DisplayBanner:
                 self.y,
                 options.esc,
                 options.opacity)
-            bottom.window.move(self.x_location, int(bottom.vres))
+            height = bottom.window.get_allocated_height()
+            bottom.window.move(self.x_location, self.y_location + int(bottom.vres) - height)
 
     def resize(self):
         """Relaunch the Classification Banner on Screen Resize"""
