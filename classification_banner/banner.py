@@ -172,6 +172,7 @@ class ClassificationBanner:
         self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.connect("hide", self.restore)
         self.window.connect("key-press-event", self.keypress)
+        self.window.connect("window-state-event", self.stay_on_top)
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
         self.window.set_property('destroy-with-parent', True)
@@ -315,6 +316,13 @@ class ClassificationBanner:
                 self.window.hide()
                 GLib.timeout_add(15000, self._restore)
 
+        return True
+
+    def stay_on_top(self, _widget, event):
+        """Restore `ABOVE` state if lost"""
+        if event.new_window_state & Gdk.WindowState.ABOVE == 0:
+            # Window has lost above state, restore it
+            self.window.set_keep_above(True)
         return True
 
 
