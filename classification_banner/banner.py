@@ -160,12 +160,7 @@ class ClassificationBanner:
         # Dynamic Resolution Scaling
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
-
-        # Newer versions of pygtk have this method
-        try:
-            self.monitor.connect("monitors-changed", self.resize)
-        except AttributeError:
-            pass
+        self.monitor.connect("monitors-changed", self.resize)
 
         # Create Main Window
         self.window = Gtk.Window()
@@ -333,15 +328,10 @@ class DisplayBanner:
         """Dynamic Resolution Scaling"""
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
+        self.monitor.connect("monitors-changed", self.resize)
 
         self.display = Gdk.Display.get_default()
         self.screen = self.display.get_default_screen()
-
-        # Newer versions of pygtk have this method
-        try:
-            self.monitor.connect("monitors-changed", self.resize)
-        except AttributeError:
-            pass
 
         # Launch Banner
         self.config = configure()
