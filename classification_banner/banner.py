@@ -5,7 +5,6 @@
 import sys
 import os
 import argparse
-import time
 import re
 import configparser
 from socket import gethostname
@@ -24,7 +23,7 @@ except KeyError:
 try:
     import gi
     gi.require_version('Gtk', '3.0')
-    from gi.repository import Gtk, Gdk
+    from gi.repository import Gtk, Gdk, GLib
 except ImportError as e:
     raise e
 
@@ -66,17 +65,25 @@ def configure():
 
     conf = configparser.ConfigParser()
     conf.read(CONF_FILE)
-    for key, val in conf.items("global"):
-        if re.match(r"^[0-9]+$", val):
-            defaults[key] = conf.getint("global", key)
-        elif re.match(r"^[0-9]+.[0-9]+$", val):
-            defaults[key] = conf.getfloat("global", key)
-        elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
-            defaults[key] = conf.getboolean("global", key)
-        else:
-            defaults[key] = val
+    if conf.has_section("global"):
+        known_keys = defaults.keys()
+        unrecognized = [
+            key for key, _ in conf.items("global") if key not in known_keys
+        ]
+        if len(unrecognized) > 0:
+            print(
+                f"The following options in the {CONF_FILE} were unrecognized:\n{unrecognized}"
+            )
+        for key, val in conf.items("global"):
+            if re.match(r"^[0-9]+$", val):
+                defaults[key] = conf.getint("global", key)
+            elif re.match(r"^[0-9]+.[0-9]+$", val):
+                defaults[key] = conf.getfloat("global", key)
+            elif re.match(r"^(true|false|yes|no)$", val, re.IGNORECASE):
+                defaults[key] = conf.getboolean("global", key)
+            else:
+                defaults[key] = val
 
-    print(defaults["sys_info"])
     # Use the global config to set defaults for command line options
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--message", default=defaults["message"],
@@ -148,21 +155,19 @@ class ClassificationBanner:
 }
 """ % bgcolor
 
+        self.hidden = False
+
         # Dynamic Resolution Scaling
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
-
-        # Newer versions of pygtk have this method
-        try:
-            self.monitor.connect("monitors-changed", self.resize)
-        except AttributeError:
-            pass
+        self.monitor.connect("monitors-changed", self.resize)
 
         # Create Main Window
         self.window = Gtk.Window()
         self.window.set_position(Gtk.WindowPosition.CENTER)
         self.window.connect("hide", self.restore)
         self.window.connect("key-press-event", self.keypress)
+        self.window.connect("window-state-event", self.stay_on_top)
         self.window.set_property('skip-taskbar-hint', True)
         self.window.set_property('skip-pager-hint', True)
         self.window.set_property('destroy-with-parent', True)
@@ -258,7 +263,7 @@ class ClassificationBanner:
         self.apply_css(self.window, provider)
 
         try:
-            self.window.set_opacit(opacity)
+            self.window.set_opacity(opacity)
         except AttributeError:  # nosec
             pass
 
@@ -271,10 +276,23 @@ class ClassificationBanner:
         if isinstance(widget, Gtk.Container):
             widget.forall(self.apply_css, provider)
 
-    def restore(self):
+    def _restore(self):
+        """
+        Restore an intentionally hidden banner.
+
+        This method returns False intentionally to destroy the timeout it is
+        called by.
+        """
+        self.hidden = False
+        self.restore()
+        return False
+
+    def restore(self, *_):
         """Restore Minimized Window"""
-        self.window.deiconify()
-        self.window.present()
+        if not self.hidden:
+            self.window.show()
+            self.window.deiconify()
+            self.window.present()
 
         return True
 
@@ -284,17 +302,22 @@ class ClassificationBanner:
 
         return True
 
-    def keypress(self, event=None):
+    def keypress(self, _widget=None, event=None):
         """Press ESC to hide window for 15 seconds"""
         if event.keyval == 65307:
-            if not Gtk.events_pending():
+            if not Gtk.events_pending() and not self.hidden:
+                self.hidden = True
                 self.window.iconify()
                 self.window.hide()
-                time.sleep(15)
-                self.window.show()
-                self.window.deiconify()
-                self.window.present()
+                GLib.timeout_add(15000, self._restore)
 
+        return True
+
+    def stay_on_top(self, _widget, event):
+        """Restore `ABOVE` state if lost"""
+        if event.new_window_state & Gdk.WindowState.ABOVE == 0:
+            # Window has lost above state, restore it
+            self.window.set_keep_above(True)
         return True
 
 
@@ -305,15 +328,10 @@ class DisplayBanner:
         """Dynamic Resolution Scaling"""
         self.monitor = Gdk.Screen()
         self.monitor.connect("size-changed", self.resize)
+        self.monitor.connect("monitors-changed", self.resize)
 
         self.display = Gdk.Display.get_default()
         self.screen = self.display.get_default_screen()
-
-        # Newer versions of pygtk have this method
-        try:
-            self.monitor.connet("monitors-changed", self.resize)
-        except AttributeError:
-            pass
 
         # Launch Banner
         self.config = configure()
@@ -324,6 +342,9 @@ class DisplayBanner:
         num_monitors = self.display.get_n_monitors()
 
         if options.hres == 0 or options.vres == 0:
+            if options.hres != 0 or options.vres != 0:
+                print("hres or vres specified, but not both, ignoring...")
+
             # Try Xrandr to determine primary monitor resolution
             try:
                 screen = os.popen(  # nosec
@@ -339,17 +360,18 @@ class DisplayBanner:
                     self.y = screen.split('x')[1].split('+')[0]
 
                 except IndexError:
-                    self.screen = os.popen(  # nosec
-                        r"/usr/bin/xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
-                    self.x = self.screen.split('x')[0]
-                    self.y = self.screen.split('x')[1].split('+')[0]
+                    try:
+                        self.screen = os.popen(  # nosec
+                            r"/usr/bin/xrandr | grep '^\*0' | awk '{ print $2$3$4 }'").readlines()[0]
+                        self.x = self.screen.split('x')[0]
+                        self.y = self.screen.split('x')[1].split('+')[0]
 
-                else:
-                    # Fail back to GTK method
-                    self.display = Gdk.Display.get_default()
-                    self.screen = self.display.get_default_screen()
-                    self.x = self.screen.get_width()
-                    self.y = self.screen.get_height()
+                    except IndexError:
+                        # Fail back to GTK method
+                        self.display = Gdk.Display.get_default()
+                        self.screen = self.display.get_default_screen()
+                        self.x = self.screen.get_width()
+                        self.y = self.screen.get_height()
         else:
             # Resoultion Set Staticly
             self.x = options.hres
